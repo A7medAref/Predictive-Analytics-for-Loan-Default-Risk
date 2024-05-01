@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 def get_cleaned_data(convert_categorical=False, print_description=False):
     # Load data
     data = pd.read_csv('../data/application_data.csv')
