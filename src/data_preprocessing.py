@@ -1,133 +1,135 @@
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
-def get_cleaned_data(convert_categorical=False, print_description=False):
-    # Load data
-    data = pd.read_csv('../data/application_data.csv')
+# def get_cleaned_data(convert_categorical=False, print_description=False):
+# 	# Load data
+# 	data = pd.read_csv('../data/application_data.csv')
 
-    # drop id column
-    data = data.drop('SK_ID_CURR', axis=1)
+# 	# drop id column
+# 	data = data.drop('SK_ID_CURR', axis=1)
 
-    # Get columns that have missing values with percentage > 5%
-    missing_data = data.isnull().mean() * 100
-    missing_data = missing_data[missing_data > 5]
+# 	# Get columns that have missing values with percentage > 5%
+# 	missing_data = data.isnull().mean() * 100
+# 	missing_data = missing_data[missing_data > 5]
 
-    # Drop columns with missing values percentage > 5%
-    cleaned_data = data.drop(missing_data.index, axis=1)
+# 	# Drop columns with missing values percentage > 5%
+# 	cleaned_data = data.drop(missing_data.index, axis=1)
 
-    # Fill the missing values
-    numerical_columns = cleaned_data.select_dtypes(include=['int64', 'float64']).columns
-    categorical_columns = cleaned_data.select_dtypes(include=['object']).columns
+# 	# Fill the missing values
+# 	numerical_columns = cleaned_data.select_dtypes(include=['int64', 'float64']).columns
+# 	categorical_columns = cleaned_data.select_dtypes(include=['object']).columns
 
-    # Fill the missing values with the mean for numerical columns
-    for column in numerical_columns:
-        cleaned_data[column] = cleaned_data[column].fillna(cleaned_data[column].mean())
+# 	# Fill the missing values with the mean for numerical columns
+# 	for column in numerical_columns:
+# 		cleaned_data[column] = cleaned_data[column].fillna(cleaned_data[column].mean())
 
-    # Fill the missing values with the mode for categorical columns
-    for column in categorical_columns:
-        cleaned_data[column] = cleaned_data[column].fillna(cleaned_data[column].mode()[0])
+# 	# Fill the missing values with the mode for categorical columns
+# 	for column in categorical_columns:
+# 		cleaned_data[column] = cleaned_data[column].fillna(cleaned_data[column].mode()[0])
 
-    # Convert categorical columns to numerical columns
-    if convert_categorical:
-        # cleaned_data = pd.get_dummies(cleaned_data, columns=categorical_columns)
-        le = LabelEncoder()
-        for col in categorical_columns:
-            cleaned_data[col] = le.fit_transform(cleaned_data[col])
-    # Remove coloumns that contain document information
-    cleaned_data = cleaned_data.drop(columns=["FLAG_DOCUMENT_2", "FLAG_DOCUMENT_3", "FLAG_DOCUMENT_4", "FLAG_DOCUMENT_5", "FLAG_DOCUMENT_6", "FLAG_DOCUMENT_7", "FLAG_DOCUMENT_8", "FLAG_DOCUMENT_9", "FLAG_DOCUMENT_10", "FLAG_DOCUMENT_11", "FLAG_DOCUMENT_12", "FLAG_DOCUMENT_13", "FLAG_DOCUMENT_14", "FLAG_DOCUMENT_15", "FLAG_DOCUMENT_16", "FLAG_DOCUMENT_17", "FLAG_DOCUMENT_18", "FLAG_DOCUMENT_19", "FLAG_DOCUMENT_20", "FLAG_DOCUMENT_21"])
-    
-    # Print the description of the columns
-    if print_description:
-        # Get Description of columns
-        cols = pd.read_csv("../data/columns_description.csv")
-        cols = cols[["Row", "Description"]]
-        # print remaining columns with their datatype and description
+# 	# Convert categorical columns to numerical columns
+# 	if convert_categorical:
+# 		# cleaned_data = pd.get_dummies(cleaned_data, columns=categorical_columns)
+# 		le = LabelEncoder()
+# 		for col in categorical_columns:
+# 			cleaned_data[col] = le.fit_transform(cleaned_data[col])
+# 	# Remove coloumns that contain document information
+# 	cleaned_data = cleaned_data.drop(columns=["FLAG_DOCUMENT_2", "FLAG_DOCUMENT_3", "FLAG_DOCUMENT_4", "FLAG_DOCUMENT_5", "FLAG_DOCUMENT_6", "FLAG_DOCUMENT_7", "FLAG_DOCUMENT_8", "FLAG_DOCUMENT_9", "FLAG_DOCUMENT_10", "FLAG_DOCUMENT_11", "FLAG_DOCUMENT_12", "FLAG_DOCUMENT_13", "FLAG_DOCUMENT_14", "FLAG_DOCUMENT_15", "FLAG_DOCUMENT_16", "FLAG_DOCUMENT_17", "FLAG_DOCUMENT_18", "FLAG_DOCUMENT_19", "FLAG_DOCUMENT_20", "FLAG_DOCUMENT_21"])
 
-        print(len(data.columns))
-        for col in data.columns:
-            print(f"Column '{col}' with datatype '{data[col].dtype}' and description : '{cols.loc[cols['Row'] == col].values[0][1]}'")
+# 	# Print the description of the columns
+# 	if print_description:
+# 		# Get Description of columns
+# 		cols = pd.read_csv("../data/columns_description.csv")
+# 		cols = cols[["Row", "Description"]]
+# 		# print remaining columns with their datatype and description
 
-    # Remove outliers
-    cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['AMT_INCOME_TOTAL'] > 0.6e6].index)
-    cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['AMT_ANNUITY'] > 0.125e6].index)
-    cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['AMT_CREDIT'] > 2.0e6].index)
-    cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['DAYS_REGISTRATION'] < -15e3].index)
-    cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['DEF_60_CNT_SOCIAL_CIRCLE'] > 15].index)
-    cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['OBS_60_CNT_SOCIAL_CIRCLE'] > 100].index)
-    cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['CNT_FAM_MEMBERS'] > 10].index)
+# 		print(len(data.columns))
+# 		for col in data.columns:
+# 			print(f"Column '{col}' with datatype '{data[col].dtype}' and description : '{cols.loc[cols['Row'] == col].values[0][1]}'")
 
-    return cleaned_data
+# 	# Remove outliers
+# 	cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['AMT_INCOME_TOTAL'] > 0.6e6].index)
+# 	cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['AMT_ANNUITY'] > 0.125e6].index)
+# 	cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['AMT_CREDIT'] > 2.0e6].index)
+# 	cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['DAYS_REGISTRATION'] < -15e3].index)
+# 	cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['DEF_60_CNT_SOCIAL_CIRCLE'] > 15].index)
+# 	cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['OBS_60_CNT_SOCIAL_CIRCLE'] > 100].index)
+# 	cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['CNT_FAM_MEMBERS'] > 10].index)
 
-def get_cleaned_data_final(convert_categorical=False, print_description=False):
-    # Load data
-    data = pd.read_csv('../data/application_data.csv')
+# 	return cleaned_data
 
-    # drop id column
-    data = data.drop('SK_ID_CURR', axis=1)
+def get_cleaned_data_final(convert_categorical=False, drop_correlated=True, drop_outliers=True, print_description=False):
+	# Load data
+	data = pd.read_csv('../data/application_data.csv')
 
-    # Get columns that have missing values with percentage > 5%
-    missing_data = data.isnull().mean() * 100
-    missing_data = missing_data[missing_data > 5]
+	# drop id column
+	data = data.drop('SK_ID_CURR', axis=1)
 
-    # Drop columns with missing values percentage > 5%
-    cleaned_data = data.drop(missing_data.index, axis=1)
+	# Get columns that have missing values with percentage > 5%
+	missing_data = data.isnull().mean() * 100
+	missing_data = missing_data[missing_data > 5]
 
-    # Fill the missing values
-    numerical_columns = cleaned_data.select_dtypes(include=['int64', 'float64']).columns
-    categorical_columns = cleaned_data.select_dtypes(include=['object']).columns
+	# Drop columns with missing values percentage > 5%
+	cleaned_data = data.drop(missing_data.index, axis=1)
 
-    # Fill the missing values with the mean for numerical columns
-    for column in numerical_columns:
-        cleaned_data[column] = cleaned_data[column].fillna(cleaned_data[column].mean())
+	# Fill the missing values
+	numerical_columns = cleaned_data.select_dtypes(include=['int64', 'float64']).columns
+	categorical_columns = cleaned_data.select_dtypes(include=['object']).columns
 
-    # Fill the missing values with the mode for categorical columns
-    for column in categorical_columns:
-        cleaned_data[column] = cleaned_data[column].fillna(cleaned_data[column].mode()[0])
+	# Fill the missing values with the mean for numerical columns
+	for column in numerical_columns:
+		cleaned_data[column] = cleaned_data[column].fillna(cleaned_data[column].mean())
 
-    # Convert categorical columns to numerical columns
-    if convert_categorical:
-        # cleaned_data = pd.get_dummies(cleaned_data, columns=categorical_columns)
-        le = LabelEncoder()
-        for col in categorical_columns:
-            cleaned_data[col] = le.fit_transform(cleaned_data[col])
-    # Remove coloumns that contain document information
-    cleaned_data = cleaned_data.drop(columns=["FLAG_DOCUMENT_2", "FLAG_DOCUMENT_3", "FLAG_DOCUMENT_4", "FLAG_DOCUMENT_5", "FLAG_DOCUMENT_6", "FLAG_DOCUMENT_7", "FLAG_DOCUMENT_8", "FLAG_DOCUMENT_9", "FLAG_DOCUMENT_10", "FLAG_DOCUMENT_11", "FLAG_DOCUMENT_12", "FLAG_DOCUMENT_13", "FLAG_DOCUMENT_14", "FLAG_DOCUMENT_15", "FLAG_DOCUMENT_16", "FLAG_DOCUMENT_17", "FLAG_DOCUMENT_18", "FLAG_DOCUMENT_19", "FLAG_DOCUMENT_20", "FLAG_DOCUMENT_21"])
-    
-    # Print the description of the columns
-    if print_description:
-        # Get Description of columns
-        cols = pd.read_csv("../data/columns_description.csv")
-        cols = cols[["Row", "Description"]]
-        # print remaining columns with their datatype and description
+	# Fill the missing values with the mode for categorical columns
+	for column in categorical_columns:
+		cleaned_data[column] = cleaned_data[column].fillna(cleaned_data[column].mode()[0])
 
-        print(len(data.columns))
-        for col in data.columns:
-            print(f"Column '{col}' with datatype '{data[col].dtype}' and description : '{cols.loc[cols['Row'] == col].values[0][1]}'")
+	# Convert categorical columns to numerical columns
+	if convert_categorical:
+		# cleaned_data = pd.get_dummies(cleaned_data, columns=categorical_columns)
+		le = LabelEncoder()
+		for col in categorical_columns:
+			cleaned_data[col] = le.fit_transform(cleaned_data[col])
+	# Remove coloumns that contain document information
+	cleaned_data = cleaned_data.drop(columns=["FLAG_DOCUMENT_2", "FLAG_DOCUMENT_3", "FLAG_DOCUMENT_4", "FLAG_DOCUMENT_5", "FLAG_DOCUMENT_6", "FLAG_DOCUMENT_7", "FLAG_DOCUMENT_8", "FLAG_DOCUMENT_9", "FLAG_DOCUMENT_10", "FLAG_DOCUMENT_11", "FLAG_DOCUMENT_12", "FLAG_DOCUMENT_13", "FLAG_DOCUMENT_14", "FLAG_DOCUMENT_15", "FLAG_DOCUMENT_16", "FLAG_DOCUMENT_17", "FLAG_DOCUMENT_18", "FLAG_DOCUMENT_19", "FLAG_DOCUMENT_20", "FLAG_DOCUMENT_21"])
 
-    high_corr_cols = [
-				  	'REGION_RATING_CLIENT', 
-                  	'AMT_GOODS_PRICE', 
-                  	'OBS_30_CNT_SOCIAL_CIRCLE', 
-                  	'DEF_30_CNT_SOCIAL_CIRCLE',
-                  	'REG_CITY_NOT_WORK_CITY',
-                  	'CNT_CHILDREN',
-				  	'FLAG_MOBIL',
-				  	'REG_REGION_NOT_LIVE_REGION',
-                  	'REG_REGION_NOT_WORK_REGION'
-					]
-    
-    cleaned_data = cleaned_data.drop(columns=high_corr_cols)
-    
-    # Remove outliers
-    cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['AMT_INCOME_TOTAL'] > 0.6e6].index)
-    cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['AMT_ANNUITY'] > 0.125e6].index)
-    cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['AMT_CREDIT'] > 2.0e6].index)
-    cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['DAYS_REGISTRATION'] < -15e3].index)
-    cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['DEF_60_CNT_SOCIAL_CIRCLE'] > 15].index)
-    cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['CNT_FAM_MEMBERS'] > 10].index)
-    cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['OBS_60_CNT_SOCIAL_CIRCLE'] > 100].index)
+	# Print the description of the columns
+	if print_description:
+		# Get Description of columns
+		cols = pd.read_csv("../data/columns_description.csv")
+		cols = cols[["Row", "Description"]]
+		# print remaining columns with their datatype and description
 
-    return cleaned_data
+		print(len(data.columns))
+		for col in data.columns:
+			print(f"Column '{col}' with datatype '{data[col].dtype}' and description : '{cols.loc[cols['Row'] == col].values[0][1]}'")
+
+	if drop_correlated:
+		high_corr_cols = [
+			'REGION_RATING_CLIENT', 
+			'AMT_GOODS_PRICE', 
+			'OBS_30_CNT_SOCIAL_CIRCLE', 
+			'DEF_30_CNT_SOCIAL_CIRCLE',
+			'REG_CITY_NOT_WORK_CITY',
+			'CNT_CHILDREN',
+			'FLAG_MOBIL',
+			'REG_REGION_NOT_LIVE_REGION',
+			'REG_REGION_NOT_WORK_REGION'
+			]
+
+		cleaned_data = cleaned_data.drop(columns=high_corr_cols)
+
+	# Remove outliers
+	if drop_outliers:
+		cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['AMT_INCOME_TOTAL'] > 0.6e6].index)
+		cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['AMT_ANNUITY'] > 0.125e6].index)
+		cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['AMT_CREDIT'] > 2.0e6].index)
+		cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['DAYS_REGISTRATION'] < -15e3].index)
+		cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['DEF_60_CNT_SOCIAL_CIRCLE'] > 15].index)
+		cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['OBS_60_CNT_SOCIAL_CIRCLE'] > 100].index)
+		cleaned_data = cleaned_data.drop(cleaned_data[cleaned_data['CNT_FAM_MEMBERS'] > 10].index)
+
+	return cleaned_data
 
 def convert_numberical_to_categorical(data, print_counts=False):
 
@@ -150,14 +152,14 @@ def convert_numberical_to_categorical(data, print_counts=False):
 		if col in cols or data[col].dtype == 'object':
 			if col in data.columns:
 				data[col] = data[col].map({x: col + "_" + str(x) for x in data[col].unique()})
-	
+
 	col = 'DAYS_LAST_PHONE_CHANGE'
 	bins = [-4000, -1500, 0]
 	labels = [
 			'DAYS_LAST_PHONE_CHANGE_-4000_-1500',
 			'DAYS_LAST_PHONE_CHANGE_-1500_0']
-	
-	
+
+
 	if col in data.columns:
 		data[col] = pd.cut(data[col], bins=bins, labels=labels, right=False)
 		if print_counts:
