@@ -58,7 +58,7 @@ from sklearn.preprocessing import LabelEncoder
 
 # 	return cleaned_data
 
-def get_cleaned_data_final(convert_categorical=False, drop_correlated=True, drop_outliers=True, print_description=False):
+def get_cleaned_data_final(convert_categorical=False, drop_correlated=True, drop_outliers=True, print_description=False, drop_documents=True):
 	# Load data
 	data = pd.read_csv('../data/application_data.csv')
 
@@ -76,6 +76,9 @@ def get_cleaned_data_final(convert_categorical=False, drop_correlated=True, drop
 	numerical_columns = cleaned_data.select_dtypes(include=['int64', 'float64']).columns
 	categorical_columns = cleaned_data.select_dtypes(include=['object']).columns
 
+	# For CODE_GENDER column we can fill "XNA" to "F" as the most frequent is F
+	# cleaned_data[cleaned_data['CODE_GENDER'] == 'XNA'] = 'F'
+
 	# Fill the missing values with the mean for numerical columns
 	for column in numerical_columns:
 		cleaned_data[column] = cleaned_data[column].fillna(cleaned_data[column].mean())
@@ -90,8 +93,10 @@ def get_cleaned_data_final(convert_categorical=False, drop_correlated=True, drop
 		le = LabelEncoder()
 		for col in categorical_columns:
 			cleaned_data[col] = le.fit_transform(cleaned_data[col])
+	
 	# Remove coloumns that contain document information
-	cleaned_data = cleaned_data.drop(columns=["FLAG_DOCUMENT_2", "FLAG_DOCUMENT_3", "FLAG_DOCUMENT_4", "FLAG_DOCUMENT_5", "FLAG_DOCUMENT_6", "FLAG_DOCUMENT_7", "FLAG_DOCUMENT_8", "FLAG_DOCUMENT_9", "FLAG_DOCUMENT_10", "FLAG_DOCUMENT_11", "FLAG_DOCUMENT_12", "FLAG_DOCUMENT_13", "FLAG_DOCUMENT_14", "FLAG_DOCUMENT_15", "FLAG_DOCUMENT_16", "FLAG_DOCUMENT_17", "FLAG_DOCUMENT_18", "FLAG_DOCUMENT_19", "FLAG_DOCUMENT_20", "FLAG_DOCUMENT_21"])
+	if drop_documents:
+		cleaned_data = cleaned_data.drop(columns=["FLAG_DOCUMENT_2", "FLAG_DOCUMENT_3", "FLAG_DOCUMENT_4", "FLAG_DOCUMENT_5", "FLAG_DOCUMENT_6", "FLAG_DOCUMENT_7", "FLAG_DOCUMENT_8", "FLAG_DOCUMENT_9", "FLAG_DOCUMENT_10", "FLAG_DOCUMENT_11", "FLAG_DOCUMENT_12", "FLAG_DOCUMENT_13", "FLAG_DOCUMENT_14", "FLAG_DOCUMENT_15", "FLAG_DOCUMENT_16", "FLAG_DOCUMENT_17", "FLAG_DOCUMENT_18", "FLAG_DOCUMENT_19", "FLAG_DOCUMENT_20", "FLAG_DOCUMENT_21"])
 
 	# Print the description of the columns
 	if print_description:
@@ -145,7 +150,8 @@ def convert_numberical_to_categorical(data, print_counts=False):
 			'REG_CITY_NOT_LIVE_CITY',
 			'LIVE_REGION_NOT_WORK_REGION',
 			'FLAG_EMAIL',
-			'LIVE_CITY_NOT_WORK_CITY'
+			'LIVE_CITY_NOT_WORK_CITY',
+			"FLAG_DOCUMENT_2", "FLAG_DOCUMENT_3", "FLAG_DOCUMENT_4", "FLAG_DOCUMENT_5", "FLAG_DOCUMENT_6", "FLAG_DOCUMENT_7", "FLAG_DOCUMENT_8", "FLAG_DOCUMENT_9", "FLAG_DOCUMENT_10", "FLAG_DOCUMENT_11", "FLAG_DOCUMENT_12", "FLAG_DOCUMENT_13", "FLAG_DOCUMENT_14", "FLAG_DOCUMENT_15", "FLAG_DOCUMENT_16", "FLAG_DOCUMENT_17", "FLAG_DOCUMENT_18", "FLAG_DOCUMENT_19", "FLAG_DOCUMENT_20", "FLAG_DOCUMENT_21"
 		]
 
 	for col in data.columns:
